@@ -47,6 +47,7 @@ int past_h = -1, past_m = -1;
 
 int width = DEFAULT_WIDTH;
 int height = DEFAULT_HEIGHT;
+double display_scale_factor = 1;
 
 TTF_Font *font_time = NULL;
 TTF_Font *font_mode = NULL;
@@ -139,7 +140,7 @@ void render_ampm(SDL_Surface *surface, SDL_Rect *rect, int pm) {
 
 
 void blit_digits(SDL_Surface *surface, SDL_Rect *rect, int spc, char digits[], SDL_Color color) {
-	int min_x, max_x, min_y, max_y, advance;
+int min_x, max_x, min_y, max_y, advance;
 	int adjust_x = (digits[0] == '1') ? 2.5 * spc : 0; // special case
 	int center_x = rect->x + rect->w / 2 - adjust_x;
 
@@ -180,7 +181,7 @@ void render_digits(SDL_Surface *surface, SDL_Rect *background, char digits[], ch
 
 	// int spc = surface->h * .0125;
 	bool is_h = surface->h < surface->w;
-	int spc = is_h ? surface->h * .0125 : surface->w * .0125;
+	int spc = (is_h ? surface->h * .0125 : surface->w * .0125) * display_scale_factor;
 
 	// blit upper halves of current digits
 	rect.x = background->x;
@@ -328,7 +329,6 @@ Uint32 update_time(Uint32 interval, void *param) {
 int main(int argc, char** argv ) {
 	char *wid_env;
 	static char sdlwid[100];
-	double display_scale_factor = 1;
 	bool test = false;
 
 	Uint32 wid = 0;
