@@ -1,5 +1,5 @@
 Name:           gluqlo
-Version:        0.0.1
+Version:        1.0.1
 Release:        1%{?dist}
 Summary:        Gluqlo is a SDL remake of well-known awesome Fliqlo screensaver
 
