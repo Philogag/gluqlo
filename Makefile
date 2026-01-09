@@ -22,3 +22,10 @@ uninstall:
 
 clean:
 	rm -f gluqlo
+
+build_rpm:
+	rpmdev-setuptree
+	sudo dnf builddep gluqlo.spec
+	rpmdev-spectool -g -R gluqlo.spec
+	rpmbuild -ba gluqlo.spec
+	rpmbuild -ba gluqlo-compatable-xfce4.spec
