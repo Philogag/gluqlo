@@ -329,6 +329,7 @@ int main(int argc, char** argv ) {
 	char *wid_env;
 	static char sdlwid[100];
 	double display_scale_factor = 1;
+	bool test = false;
 
 	Uint32 wid = 0;
 	Display *display;
@@ -347,6 +348,7 @@ int main(int argc, char** argv ) {
 			printf("  -h\t\tCustom height\n");
 			printf("  -r\t\tCustom resolution in WxH format\n");
 			printf("  -s\t\tCustom display scale factor\n");
+			printf("  -test\t\tGenerate 1080p test images\n");
 			return 0;
 		} else if(strcmp("-root", argv[i]) == 0 || strcmp("-f", argv[i]) == 0 || strcmp("--fullscreen", argv[i]) == 0) {
 			fullscreen = true;
@@ -358,6 +360,8 @@ int main(int argc, char** argv ) {
 			twentyfourh = false;
 		} else if(strcmp("-leadingzero", argv[i]) == 0) {
 			leadingzero = true;
+		} else if(strcmp("-test", argv[i]) == 0) {
+			test = true;
 		} else if(strcmp("-r", argv[i]) == 0 || strcmp("--resolution", argv[i]) == 0) {
 			char *resolution = argv[i+1];
 			char *val = strtok(resolution, "x");
@@ -403,13 +407,16 @@ int main(int argc, char** argv ) {
 		}
 	}
 
-	if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) < 0) {
+	if(!test && SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) < 0) {
 		fprintf(stderr, "Unable to init SDL: %s\n", SDL_GetError());
 		return 1;
 	}
 	atexit(SDL_Quit);
 
-	if(fullscreen && (!wid)) {
+	if (test) {
+		screen = SDL_CreateRGBSurface(SDL_SWSURFACE, 1920, 1080, 32, 0, 0, 0, 0);
+	}
+	else if(fullscreen && (!wid)) {
 		screen = SDL_SetVideoMode(0, 0, 32, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_FULLSCREEN);
 	} else {
 		screen = SDL_SetVideoMode(width, height, 32, SDL_HWSURFACE|SDL_DOUBLEBUF);
@@ -498,6 +505,11 @@ int main(int argc, char** argv ) {
 
 	// draw current time
 	render_clock(20, 19);
+
+	if (test) {
+		SDL_SaveBMP(screen, "test.bmp");
+		return 0;
+	}
 
 	// main loop
 	bool done = false;
